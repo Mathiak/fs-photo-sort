@@ -45,14 +45,13 @@ class ImageFileSorter:
         return self._raw_files
 
     def add_folder(self, folder):
-        not_ordered_files = glob.glob(folder + "*.jpg")
+        not_ordered_files = glob.glob(folder + "/*.jpg")
         self._raw_files = self._raw_files + not_ordered_files
 
     def filter_and_sort(self):
-        print( self._raw_files)
         for filename in self._raw_files:
             exif_dict = piexif.load(filename)
-            date = exif_dict.pop("DateTime")
+            date = exif_dict["Exif"].pop(piexif.ExifIFD.DateTimeOriginal)
             if date is not None:
                 print(date)
         self._date_ordered_image_files = self._raw_files

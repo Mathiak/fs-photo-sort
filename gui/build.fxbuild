@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="ASCII"?>
+<anttasks:AntTask xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:anttasks="http://org.eclipse.fx.ide.jdt/1.0" buildDirectory="${project}/build">
+  <deploy packagingFormat="msi">
+    <application name="fs-photo-sort-gui" mainclass="fsphotosort.gui.GuiLauncher" version="0.0.1" toolkit="fx"/>
+    <info title="FS Photo Sort" vendor="Mathias Kowalski"/>
+  </deploy>
+  <signjar/>
+</anttasks:AntTask>
