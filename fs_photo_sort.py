@@ -2,37 +2,10 @@
 
 # -*-coding:utf-8
 
-from tkinter import *
-from tkinter.filedialog import *
 from PIL import Image
 import piexif
 import glob
-
-class PhotoSortFrame(Frame):
-    """Class defining photo sort main frame"""
-
-    def __init__(self, myframe, filesorter, **kwargs):
-        Frame.__init__(self, myframe, width=800, height=600, **kwargs)
-        self.parent = myframe
-        self.__filesorter = filesorter
-
-        # frame 1
-        frame1 = LabelFrame(
-            myframe,
-            text="Source folders containing photos to sort",
-            padx=20,
-            pady=20)
-        frame1.pack(fill="both", expand="yes")
-        # Ajout de labels
-        add_source_button = Button(
-            frame1, text="Add Folder Location", command=self.add_source_folder)
-        add_source_button.pack()
-        self.pack(fill=BOTH)
-
-    def add_source_folder(self):
-        filepath = askdirectory()
-        self.__filesorter.add_folder(filepath)
-        self.__filesorter.filter_and_sort()
+import sys
 
 class ImageFileSorter:
     """Sort image files"""
@@ -57,8 +30,8 @@ class ImageFileSorter:
         self._date_ordered_image_files = self._raw_files
 
 if __name__ == '__main__':
-    FRAME = Tk()
-    FRAME.title("FS Photot Sort")
-    FILE_SORTER = ImageFileSorter()
-    PHOTOFRAME = PhotoSortFrame(FRAME, FILE_SORTER)
-    PHOTOFRAME.mainloop()
+    filesorter = ImageFileSorter()
+    for arg in sys.argv[1:]:
+        print (arg)
+        filesorter.add_folder(arg)
+    filesorter.filter_and_sort()
