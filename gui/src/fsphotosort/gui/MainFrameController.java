@@ -3,16 +3,14 @@ package fsphotosort.gui;
 import java.io.File;
 import java.util.ResourceBundle;
 
-import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
+import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.DirectoryChooser;
 
 public class MainFrameController {
@@ -29,7 +27,9 @@ public class MainFrameController {
 	private TextArea destinationPathProperty;
 
 	@FXML
-	private TextFlow terminal;
+    private TitledPane titledTerminal;
+
+	private Console terminal;
 
 	private final PhotoSorter photoSorter;
 
@@ -39,21 +39,32 @@ public class MainFrameController {
 
 	@FXML
 	public void initialize() {
+		terminal = new Console();
+		titledTerminal.setContent(terminal);
 		sourcePathColumn.setCellValueFactory(sourceItem -> sourceItem.getValue().getTextualPath());
 		photoSorter.getDestinationPath()
 				.addListener((observable, oldValue, newValue) -> destinationPathProperty.setText(newValue.toString()));
 		sourceTable.setItems(photoSorter.getSourcePaths());
 		photoSorter.getOutputText().addListener((ListChangeListener<? super String>) (change) -> {
 			while (change.next()) {
-                if (change.wasAdded()) {
-                	change.getAddedSubList().forEach(lAddedText -> terminal.getChildren().add(new Text(lAddedText)));
-                }
+				if (change.wasAdded()) {
+					change.getAddedSubList().forEach(lAddedText -> terminal.print(lAddedText));
+				}
 			}
 		});
 	}
 
 	@FXML
 	void addSource(ActionEvent event) {
+		addSource();
+	}
+
+	@FXML
+	void addSourceFromView(MouseEvent event) {
+		addSource();
+	}
+
+	private void addSource() {
 		DirectoryChooser chooser = new DirectoryChooser();
 		chooser.setTitle(GUI_BUNDLE.getString("source.chooser.title"));
 		File selectedDirectory = chooser.showDialog(sourceTable.getScene().getWindow());
@@ -64,7 +75,7 @@ public class MainFrameController {
 
 	@FXML
 	void proceed(ActionEvent event) {
-                photoSorter.sort();
+		photoSorter.sort();
 	}
 
 	@FXML
