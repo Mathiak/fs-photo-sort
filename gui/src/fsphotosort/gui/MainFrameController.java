@@ -29,14 +29,20 @@ public class MainFrameController {
 	private TextArea destinationPathProperty;
 
 	@FXML
-    private TitledPane titledTerminal;
+	private TitledPane titledTerminal;
 
 	private Console terminal;
 
 	private final PhotoSorter photoSorter;
+	private final DirectoryChooser sourceDirectoryChooser;
+	private final DirectoryChooser destinationDirectoryChooser;
 
 	public MainFrameController() {
 		photoSorter = new PhotoSorter();
+		sourceDirectoryChooser = new DirectoryChooser();
+		sourceDirectoryChooser.setTitle(GUI_BUNDLE.getString("source.chooser.title"));
+		destinationDirectoryChooser = new DirectoryChooser();
+		destinationDirectoryChooser.setTitle(GUI_BUNDLE.getString("destination.chooser.title"));
 	}
 
 	@FXML
@@ -67,18 +73,21 @@ public class MainFrameController {
 	}
 
 	private void addSource() {
-		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle(GUI_BUNDLE.getString("source.chooser.title"));
-		File selectedDirectory = chooser.showDialog(sourceTable.getScene().getWindow());
-		File[] lSubdirectories = selectedDirectory.listFiles(new FilenameFilter() {
-			  @Override
-			  public boolean accept(File current, String name) {
-			    return new File(current, name).isDirectory();
-			  }
-			});
-		Arrays.stream(lSubdirectories).map(File::toPath).forEach(path -> photoSorter.addSourcePath(new SourceItem(path)));
+		File selectedDirectory = sourceDirectoryChooser.showDialog(sourceTable.getScene().getWindow());
+		sourceDirectoryChooser.setInitialDirectory(selectedDirectory);
+		addDirectoryAndSubDirectories(selectedDirectory);
+	}
+
+	private void addDirectoryAndSubDirectories(File selectedDirectory) {
 		if (selectedDirectory != null) {
 			photoSorter.addSourcePath(new SourceItem(selectedDirectory.toPath()));
+			File[] lSubdirectories = selectedDirectory.listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File current, String name) {
+					return new File(current, name).isDirectory();
+				}
+			});
+			Arrays.stream(lSubdirectories).forEach(path -> addDirectoryAndSubDirectories(path));
 		}
 	}
 
@@ -89,9 +98,7 @@ public class MainFrameController {
 
 	@FXML
 	void selectDestination(ActionEvent event) {
-		DirectoryChooser chooser = new DirectoryChooser();
-		chooser.setTitle(GUI_BUNDLE.getString("source.chooser.title"));
-		File selectedDirectory = chooser.showDialog(sourceTable.getScene().getWindow());
+		File selectedDirectory = destinationDirectoryChooser.showDialog(sourceTable.getScene().getWindow());
 		if (selectedDirectory != null) {
 			photoSorter.setDestinationPath(selectedDirectory.toPath());
 		}

@@ -28,7 +28,6 @@ public class PhotoSorter {
 	}
 
 	public void addSourcePath(SourceItem pNewSourcePath) {
-		System.out.println("add:" + pNewSourcePath);
 		sourcePaths.add(pNewSourcePath);
 	}
 
@@ -41,7 +40,6 @@ public class PhotoSorter {
 	}
 
 	private void print(String s) {
-		System.out.println(s);
 		outputText.add(s + "\n");
 	}
 
@@ -69,7 +67,6 @@ public class PhotoSorter {
 			String cmd = "python ..\\fs_photo_sort.py " + "\"" + destinationPath.get().normalize().toString() + "\" "
 					+ sources;
 			print(cmd);
-			System.out.println(cmd);
 
 			try {
 				Process p = Runtime.getRuntime().exec(cmd);
