@@ -28,6 +28,7 @@ public class PhotoSorter {
 	}
 
 	public void addSourcePath(SourceItem pNewSourcePath) {
+		System.out.println("add:" + pNewSourcePath);
 		sourcePaths.add(pNewSourcePath);
 	}
 

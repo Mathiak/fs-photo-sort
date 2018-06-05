@@ -1,6 +1,8 @@
 package fsphotosort.gui;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import javafx.collections.ListChangeListener;
@@ -68,6 +70,13 @@ public class MainFrameController {
 		DirectoryChooser chooser = new DirectoryChooser();
 		chooser.setTitle(GUI_BUNDLE.getString("source.chooser.title"));
 		File selectedDirectory = chooser.showDialog(sourceTable.getScene().getWindow());
+		File[] lSubdirectories = selectedDirectory.listFiles(new FilenameFilter() {
+			  @Override
+			  public boolean accept(File current, String name) {
+			    return new File(current, name).isDirectory();
+			  }
+			});
+		Arrays.stream(lSubdirectories).map(File::toPath).forEach(path -> photoSorter.addSourcePath(new SourceItem(path)));
 		if (selectedDirectory != null) {
 			photoSorter.addSourcePath(new SourceItem(selectedDirectory.toPath()));
 		}

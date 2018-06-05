@@ -28,23 +28,26 @@ class ImageFileSorter:
     def filter_and_sort(self):
         for filename in self._raw_files:
             exif_dict = piexif.load(filename)
-            date = exif_dict["Exif"].pop(piexif.ExifIFD.DateTimeOriginal)
-            if date is not None:
+            try:
+                date = exif_dict["Exif"].pop(piexif.ExifIFD.DateTimeOriginal)
                 T=datetime.strptime('{}'.format(date),'b\'%Y:%m:%d %H:%M:%S\'')
                 year = T.year
                 month = T.month
-                destPath = Path(self.destination)
-                destPathYear = Path(join(destPath, str(year)))
-                destPathMonth = Path(join(destPathYear, str(month)))
-                if not destPathYear.exists():
-                    destPathYear.mkdir()
-                    print("making " + str(destPathYear))
-                if not destPathMonth.exists():
-                    destPathMonth.mkdir()
-                    print("making " + str(destPathMonth))
-                if destPathMonth.exists():
-                    print("copying " + str(filename) + " to " + str(destPathMonth))
-                    copy(filename, destPathMonth)
+            except (ValueError, KeyError):
+                year = 0000
+                month = 0
+            destPath = Path(self.destination)
+            destPathYear = Path(join(destPath, str(year)))
+            destPathMonth = Path(join(destPathYear, str(month)))
+            if not destPathYear.exists():
+                destPathYear.mkdir()
+                print("making " + str(destPathYear))
+            if not destPathMonth.exists():
+                destPathMonth.mkdir()
+                print("making " + str(destPathMonth))
+            if destPathMonth.exists():
+                print("copying " + str(filename) + " to " + str(destPathMonth))
+                copy(filename, destPathMonth)
         print("Photo sort finished")
 
 if __name__ == '__main__':
